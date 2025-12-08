@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./builds",
+
+    "target": "ES5",
+    "module": "none",
+
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
+

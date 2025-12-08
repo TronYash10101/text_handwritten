@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+
+	<style>
+		@font-face {
+			font-family: 'font1';
+			/* Choose a unique name for your font */
+			src: url('./fonts/font1.ttf') format('truetype');
+			/* Path to your .ttf file */
+			font-weight: normal;
+			/* Define the weight (e.g., normal, bold, 400, 700) */
+			font-style: normal;
+			/* Define the style (e.g., normal, italic) */
+			font-display: swap;
+			/* Optional: improves performance by preventing blank text while loading */
+		}
+
+		body {
+			font-size: 36px;
+		}
+
+		#input {
+			position: relative;
+			resize: none;
+			width: 60em;
+		}
+
+		#Page {
+			position: relative;
+			border: 1px solid black;
+			width: 30em;
+		}
+
+		#container {
+			border: 1px solid black;
+			height: 94vh;
+			width: 99vw;
+			padding: 0.5em 0em;
+			display: flex;
+			justify-content: center;
+		}
+
+		.container_element {
+			margin: 0em 0.2em;
+			height: 94vh;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div id="container">
+		<textarea id="input" class="container_element"></textarea>
+		<canvas id="Page" class="container_element"></canvas>
+	</div>
+	<script src="../canvas/builds/main.js"></script>
+</body>
+
+</html>

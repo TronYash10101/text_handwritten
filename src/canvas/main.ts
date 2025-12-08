@@ -1,0 +1,116 @@
+type LinePosition = [move_pen_x: number, move_pen_y: number, draw_x: number, draw_y: number]
+
+interface ILine {
+	line_text: string,
+	line_pos: LinePosition
+}
+
+interface IParagraph {
+	line: ILine[]
+}
+
+function setupCanvas(canvas: HTMLCanvasElement) {
+	const dpr = window.devicePixelRatio || 1
+
+	const rect = canvas.getBoundingClientRect()
+	canvas.width = rect.width * dpr
+	canvas.height = rect.height * dpr
+
+	const ctx = canvas.getContext("2d")!
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+}
+
+
+function draw_text(canvas: HTMLCanvasElement, paragraph: IParagraph) {
+	const ctx = canvas.getContext("2d")
+	if (!ctx) return
+
+	const LINE_SPACING = 33 //hardcoded change later
+
+	ctx.clearRect(0, 0, canvas.width, canvas.height)
+	for (let line = 0; line < paragraph.line.length; line++) {
+		ctx.beginPath()
+		ctx.setLineDash([])
+		ctx.strokeStyle = "black"
+		ctx.lineWidth = 2
+		ctx.moveTo(paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1])
+		ctx.lineTo(paragraph.line[line].line_pos[2], paragraph.line[line].line_pos[3])
+		ctx.stroke()
+
+		ctx.font = "30px font1"
+		ctx.fillStyle = "black"
+		ctx.textBaseline = "top"
+
+		ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1] - LINE_SPACING)
+
+	}
+}
+
+function add_buffer(paragraph: IParagraph, fullText: string, line_pos: LinePosition) {
+	const LINE_SPACING = 50 //hardcoded change later
+
+	paragraph.line.length = 0
+	const lines = fullText.split("\n")
+	let line_y = line_pos[1]
+
+	for (const line of lines) {
+		const new_line: ILine = {
+			line_text: line,
+			line_pos: [
+				line_pos[0], line_y, line_pos[2], line_y
+			]
+		}
+		line_y += LINE_SPACING
+		paragraph.line.push(new_line)
+
+	}
+
+
+}
+
+//Faster but does not handle backspace,insertion,etc ; need to manually handle that
+/* function add_buffer(paragraph: IParagraph, char: string, line_pos: LinePosition) {
+	const LINE_SPACING = 30
+	if (paragraph.line.length === 0) {
+		paragraph.line.push({
+			line_text: "",
+			line_pos: [...line_pos] as LinePosition
+		})
+	}
+	if (char == "\n") {
+		const new_line: ILine = {
+			line_text: "",
+			line_pos: [
+				line_pos[0], line_pos[1] + LINE_SPACING, line_pos[2], line_pos[3] + LINE_SPACING
+			]
+		}
+		paragraph.line[paragraph.line.length + 1] = new_line
+	} else {
+		paragraph.line[paragraph.line.length - 1].line_text += char
+	}
+
+} */
+const canvas = document.getElementById("Page") as HTMLCanvasElement
+setupCanvas(canvas)
+const input = document.getElementById("input") as HTMLTextAreaElement | null
+
+
+
+//Event Loop
+if (input) {
+	// const pen_x = 0
+	// const pen_y = 10
+	// const line_width = 50
+	const line_pos: LinePosition = [0, 50, 1500, 0] //hardcoded change later
+	// let line_no = 0
+
+	let paragraph: IParagraph = { line: [] }
+
+	input.addEventListener("input", (e) => {
+		let target = e.currentTarget as HTMLTextAreaElement
+
+		add_buffer(paragraph, target.value, line_pos)
+		console.log(paragraph)
+		draw_text(canvas, paragraph)
+	})
+}
