@@ -1,4 +1,5 @@
 "use strict";
+var FONT_SIZE = 30;
 function setupCanvas(canvas) {
     var dpr = window.devicePixelRatio || 1;
     var rect = canvas.getBoundingClientRect();
@@ -8,10 +9,11 @@ function setupCanvas(canvas) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 function draw_text(canvas, paragraph) {
+    var _a;
     var ctx = canvas.getContext("2d");
     if (!ctx)
-        return;
-    var LINE_SPACING = 33; //hardcoded change later
+        return -1;
+    // const LINE_SPACING = 33 //hardcoded change later
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var line = 0; line < paragraph.line.length; line++) {
         ctx.beginPath();
@@ -21,11 +23,14 @@ function draw_text(canvas, paragraph) {
         ctx.moveTo(paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1]);
         ctx.lineTo(paragraph.line[line].line_pos[2], paragraph.line[line].line_pos[3]);
         ctx.stroke();
-        ctx.font = "30px font1";
+        ctx.font = "".concat(FONT_SIZE, "px font1");
         ctx.fillStyle = "black";
-        ctx.textBaseline = "top";
-        ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1] - LINE_SPACING);
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1]);
     }
+    var curr_font = ctx.font;
+    var fontsize = (_a = curr_font.match(/(\d+)px/)) === null || _a === void 0 ? void 0 : _a[1];
+    return Number(fontsize);
 }
 function add_buffer(paragraph, fullText, line_pos) {
     var LINE_SPACING = 50; //hardcoded change later
@@ -71,16 +76,18 @@ setupCanvas(canvas);
 var input = document.getElementById("input");
 //Event Loop
 if (input) {
-    // const pen_x = 0
-    // const pen_y = 10
-    // const line_width = 50
-    var line_pos_1 = [0, 50, 1500, 0]; //hardcoded change later
-    // let line_no = 0
+    var line_pos_1 = [0, 45, 1500, 45]; //hardcoded change later
     var paragraph_1 = { line: [] };
+    var fontsize_1 = draw_text(canvas, paragraph_1);
     input.addEventListener("input", function (e) {
         var target = e.currentTarget;
+        var lines = target.value.split(/\r?\n/);
+        var lastline_width = lines[lines.length - 1].length;
+        if (fontsize_1 != null && lastline_width * fontsize_1 >= canvas.width + /* input.clientWidth */ 300) {
+            target.value += "\n";
+            console.log("true");
+        }
         add_buffer(paragraph_1, target.value, line_pos_1);
-        console.log(paragraph_1);
-        draw_text(canvas, paragraph_1);
+        fontsize_1 = draw_text(canvas, paragraph_1);
     });
 }

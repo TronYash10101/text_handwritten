@@ -1,3 +1,5 @@
+const FONT_SIZE: number = 30
+
 type LinePosition = [move_pen_x: number, move_pen_y: number, draw_x: number, draw_y: number]
 
 interface ILine {
@@ -21,11 +23,11 @@ function setupCanvas(canvas: HTMLCanvasElement) {
 }
 
 
-function draw_text(canvas: HTMLCanvasElement, paragraph: IParagraph) {
+function draw_text(canvas: HTMLCanvasElement, paragraph: IParagraph): number {
 	const ctx = canvas.getContext("2d")
-	if (!ctx) return
+	if (!ctx) return -1
 
-	const LINE_SPACING = 33 //hardcoded change later
+	// const LINE_SPACING = 33 //hardcoded change later
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height)
 	for (let line = 0; line < paragraph.line.length; line++) {
@@ -37,13 +39,16 @@ function draw_text(canvas: HTMLCanvasElement, paragraph: IParagraph) {
 		ctx.lineTo(paragraph.line[line].line_pos[2], paragraph.line[line].line_pos[3])
 		ctx.stroke()
 
-		ctx.font = "30px font1"
+		ctx.font = `${FONT_SIZE}px font1`
 		ctx.fillStyle = "black"
-		ctx.textBaseline = "top"
+		ctx.textBaseline = "alphabetic"
 
-		ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1] - LINE_SPACING)
+		ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1])
 
 	}
+	const curr_font = ctx.font;
+	const fontsize = curr_font.match(/(\d+)px/)?.[1];
+	return Number(fontsize);
 }
 
 function add_buffer(paragraph: IParagraph, fullText: string, line_pos: LinePosition) {
@@ -98,19 +103,19 @@ const input = document.getElementById("input") as HTMLTextAreaElement | null
 
 //Event Loop
 if (input) {
-	// const pen_x = 0
-	// const pen_y = 10
-	// const line_width = 50
-	const line_pos: LinePosition = [0, 50, 1500, 0] //hardcoded change later
-	// let line_no = 0
-
+	const line_pos: LinePosition = [0, 45, 1500, 45] //hardcoded change later
 	let paragraph: IParagraph = { line: [] }
+	let fontsize: number | null = draw_text(canvas, paragraph)
 
 	input.addEventListener("input", (e) => {
 		let target = e.currentTarget as HTMLTextAreaElement
-
+		const lines = target.value.split(/\r?\n/);
+		let lastline_width = lines[lines.length - 1].length
+		if (fontsize != null && lastline_width * fontsize >= canvas.width + /* input.clientWidth */ 300) {
+			target.value += "\n"
+			console.log("true")
+		}
 		add_buffer(paragraph, target.value, line_pos)
-		console.log(paragraph)
-		draw_text(canvas, paragraph)
+		fontsize = draw_text(canvas, paragraph)
 	})
 }
