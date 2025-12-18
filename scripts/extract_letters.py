@@ -1,10 +1,11 @@
 import cv2
 import os
 import numpy as np
-
+import pytesseract
+# from PIL import Image
 # ---------- CONFIG ----------
 IMAGE_PATH = "./letter.png"
-OUTPUT_DIR = "extracted_letters"
+OUTPUT_DIR = "./extracted_letters"
 MIN_AREA = 300   # filters tiny noise
 PADDING = 10     # space around each letter
 # ----------------------------
@@ -40,7 +41,7 @@ for cnt in contours:
 
     letter_crop = image[y1:y2, x1:x2]
 
-    filename = f"letter_{count:03d}.png"
+    filename = f"{count:02d}.png"
     cv2.imwrite(os.path.join(OUTPUT_DIR, filename), letter_crop)
     count += 1
 

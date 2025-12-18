@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+
+</head>
+<style>
+	#container {
+		border: 2px solid black;
+		height: 97vh;
+		width: 99vw;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+
+		/* DISTRIBUTE COLUMNS: Spreads columns evenly across the width */
+		align-content: space-around;
+
+		/* OPTIONAL: Spreads cards vertically within each column */
+		justify-content: space-evenly;
+
+		padding: 1rem;
+		box-sizing: border-box;
+	}
+
+
+	.card {
+		border: 1px solid black;
+		height: 16vh;
+		width: 10vw;
+		/* Removed relative positioning and large margins that caused extra gaps */
+		box-sizing: border-box;
+	}
+</style>
+
+<body>
+	<form id="container" enctype="multipart/form-data"></form>
+</body>
+<script src="../canvas/builds/upload_letters.js" type="module"></script>
+
+</html>
