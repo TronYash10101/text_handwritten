@@ -1,28 +1,33 @@
-from typing import Annotated
-from fastapi import FastAPI, UploadFile, HTTPException, Request
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, UploadFile, File
+from typing import List
 import os
-import shutil
+import subprocess
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-curr_dir = os.getcwd()
-local_font_path = os.path.join(curr_dir,"fonts")
-os.makedirs(local_font_path, exist_ok = True)
 
-@app.mount("/", StaticFiles(directory=os.path.join(curr_dir,"../static_files")), name = "typing_html")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.post("/upload_font")
-async def recieve_font_png(file : UploadFile):
-    font_name = file.filename
+def run_pipeline():
+    subprocess.run(["python3", "scripts/create_pnms.py"], check=True)
+    subprocess.run(["python3", "scripts/create_svgs.py"], check=True)
+    subprocess.run(["fontforge", "-script", "scripts/create_font.py"], check=True)
 
-    if file.content_type != "image/png":
-        raise HTTPException(status_code=422, detail="Only PNGs are allowed to be uploaded")
-    
-    with open(os.path.join(local_font_path,f"{font_name}"), "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+@app.post("/upload")
+async def upload_letters(files: List[UploadFile] = File(...)):
+    os.makedirs("uploads", exist_ok=True)
 
+    for file in files:
+        data = await file.read()
+        with open(f"uploads/{file.filename}", "wb") as f:
+            f.write(data)
 
-    return {"response" : "Copied file to local system"}
+    run_pipeline()
 
-
+    return {"status": "font created"}
 

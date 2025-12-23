@@ -9,7 +9,6 @@ function setupCanvas(canvas) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 function draw_text(canvas, paragraph) {
-    var _a;
     const ctx = canvas.getContext("2d");
     if (!ctx)
         return -1;
@@ -29,7 +28,7 @@ function draw_text(canvas, paragraph) {
         ctx.fillText(paragraph.line[line].line_text, paragraph.line[line].line_pos[0], paragraph.line[line].line_pos[1]);
     }
     const curr_font = ctx.font;
-    const fontsize = (_a = curr_font.match(/(\d+)px/)) === null || _a === void 0 ? void 0 : _a[1];
+    const fontsize = curr_font.match(/(\d+)px/)?.[1];
     return Number(fontsize);
 }
 function add_buffer(paragraph, fullText, line_pos) {
