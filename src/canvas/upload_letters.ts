@@ -1,7 +1,12 @@
 type LetterImages = Record<string, ArrayBuffer>
 
 const form = document.getElementById("container") as HTMLFormElement
-const MAX_CARDS = 62
+const chars = [
+	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)), // a-z
+	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)), // A-Z
+	...Array.from({ length: 10 }, (_, i) => String(i))                   // 0-9
+]
+const MAX_CARDS = chars.length
 
 function check_type(ext: string): number {
 	if (!ext.toLowerCase().endsWith(".png")) {
@@ -13,7 +18,7 @@ function check_type(ext: string): number {
 
 const images: LetterImages = {}
 
-async function select_image(up_btn: HTMLInputElement, card: HTMLImageElement) {
+async function select_image(up_btn: HTMLInputElement, card: HTMLImageElement, card_no: number) {
 	up_btn.addEventListener("change", function() {
 		if (this.files && this.files.length > 0) {
 			const file = this.files[0]
@@ -32,8 +37,8 @@ async function select_image(up_btn: HTMLInputElement, card: HTMLImageElement) {
 				card.onload = () => {
 					URL.revokeObjectURL(preview_url)
 				}
-
-				images[file.name] = reader.result as ArrayBuffer
+				console.log(chars[card_no])
+				images[chars[card_no]] = reader.result as ArrayBuffer
 			}
 
 			reader.readAsArrayBuffer(file)
@@ -41,20 +46,36 @@ async function select_image(up_btn: HTMLInputElement, card: HTMLImageElement) {
 	})
 }
 
-for (let card_no = 0; card_no < MAX_CARDS; card_no++) {
-	const card = form.appendChild(document.createElement("img"))
-	const up_btn = form.appendChild(document.createElement("input"))
 
+
+for (let card_no = 0; card_no < MAX_CARDS; card_no++) {
+	const wrapper = document.createElement("div")
+	wrapper.className = "card-wrapper"
+
+	const label = document.createElement("p")
+	label.textContent = `Upload "${chars[card_no]}"`
+
+	const card = document.createElement("img")
 	card.className = "card"
-	up_btn.title = "Upload Character"
+	const up_btn = document.createElement("input")
 	up_btn.type = "file"
 
-	select_image(up_btn, card)
+	up_btn.name = "files"
+	wrapper.appendChild(label)
+	wrapper.appendChild(card)
+	wrapper.appendChild(up_btn)
+
+	form.appendChild(wrapper)
+
+	select_image(up_btn, card, card_no)
 }
+
+
 
 const submit_btn = form.appendChild(
 	document.createElement("button")
 ) as HTMLButtonElement
+
 submit_btn.type = "submit"
 submit_btn.innerText = "Submit Letters"
 
@@ -72,6 +93,9 @@ form.addEventListener("submit", async (e) => {
 		method: "POST",
 		body: fd
 	})
-	console.log(await res.json())
+	// console.log(await res.json())
+	if (res.redirected) {
+		window.location.href = res.url
+	}
 })
 

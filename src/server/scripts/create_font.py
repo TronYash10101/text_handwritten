@@ -7,8 +7,8 @@ offset_y = 20
 transformation_matrix = (1, 0, 0, 1, offset_x, offset_y)
 
 # curr_dir = os.getcwd()
-svg_dir = "/home/yash-jadhav/text_handwriting/src/server/uploads/svg"
-font_path = os.path.join(svg_dir, "font1.sfd")
+svg_dir = "/home/yash-jadhav/text_handwriting/src/server/uploads/svg/"
+font_path = os.path.join(svg_dir, "fonts/font1.sfd")
 
 font = fontforge.font()
 DSEND_VALUE = 200 
