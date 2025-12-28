@@ -25,15 +25,28 @@
 		#input {
 			position: relative;
 			resize: none;
-			width: 53em;
+			width: 70em;
 			left: 1em;
+			border-radius: 5px;
+			backdrop-filter: blur(22px) saturate(180%);
+			-webkit-backdrop-filter: blur(22px) saturate(180%);
+			background-color: rgba(255, 255, 255, 0.78);
+			border-radius: 12px;
+			/* border: 1px solid rgba(255, 255, 255, 0.125); */
+		}
+
+		#input:focus {
+			outline: none;
+			box-shadow: 8px 8px 8px #d9d9d9,
+				-20px -20px 60px #ffffff;
 		}
 
 		#Page {
 			position: relative;
 			border: 1px solid black;
-			width: 24em;
+			width: 25em;
 			left: 1em;
+			background-color: white;
 		}
 
 		#container {
@@ -42,6 +55,11 @@
 			width: 99vw;
 			padding: 0.5em 0em;
 			display: flex;
+			backdrop-filter: blur(25px) saturate(180%);
+			-webkit-backdrop-filter: blur(25px) saturate(180%);
+			background-color: rgba(220, 124, 255, 0.09);
+			border-radius: 12px;
+			border: 1px solid rgba(255, 255, 255, 0.125);
 		}
 
 		.container_element {
